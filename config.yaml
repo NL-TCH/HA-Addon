@@ -11,7 +11,10 @@ arch:
   - i386
 boot: auto
 startup: system
-privileged: ['NET_ADMIN','SYS_ADMIN']
+host_ipc: true
+host_dbus: true
+host_pid: true
+privileged: ['NET_ADMIN','SYS_ADMIN', 'SYS_RESOURCE', 'IPC_LOCK', 'SYS_MODULE']
 full_access: true
 host_network: true
 options:
