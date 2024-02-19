@@ -9,14 +9,31 @@ arch:
   - armhf
   - armv7
   - i386
-boot: auto
 startup: system
-host_ipc: true
-host_dbus: true
-host_pid: true
-privileged: ['NET_ADMIN','SYS_ADMIN', 'SYS_RESOURCE', 'IPC_LOCK', 'SYS_MODULE']
-full_access: true
+boot: auto
 host_network: true
+apparmor: false
+host_dbus: true
+full_access: true
+privileged:
+- NET_ADMIN
+- SYS_ADMIN
+- SYS_RESOURCE
+- IPC_LOCK
+- SYS_MODULE
+- SYS_RAWIO
+- SYS_TIME
+- SYS_NICE
+devices:
+- "/dev/mem:/dev/mem:rwm"
+map:
+- config:rw
+- ssl:rw
+- addons:rw
+- share:rw
+- backup:rw
+host_ipc: true
+host_pid: true
 options:
   var1: asdfasdf
 schema:
