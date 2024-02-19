@@ -2,7 +2,7 @@ name: "Hello world2"
 description: "My first real add-on!"
 version: "1.0.1"
 slug: "hello_world2"
-init: false
+init: true
 arch:
   - aarch64
   - amd64
