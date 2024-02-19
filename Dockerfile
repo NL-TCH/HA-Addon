@@ -31,8 +31,12 @@ RUN apt-get update &&                            \
        /var/tmp/*                                                     \
        /usr/share/doc/*                                               \
        /usr/share/man/*                                               \
-       /usr/share/local/* 
+       /usr/share/local/* &&                                          \
+                                                                      \
+    # Create default 'admin/admin' user
+    useradd --create-home --shell /bin/bash admin && echo "admin:admin" | chpasswd && adduser admin sudo
 
+# Disable systemd services/units that are unnecessary within a container.
 RUN systemctl mask systemd-udevd.service \
                    systemd-udevd-kernel.socket \
                    systemd-udevd-control.socket \
