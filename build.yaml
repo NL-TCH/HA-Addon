@@ -1,0 +1,2 @@
+build_from:
+  armhf: debian:bullseye:latest
