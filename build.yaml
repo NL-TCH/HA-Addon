@@ -1,2 +1,3 @@
 build_from:
-  armhf: debian:bullseye:latest
+  arm64: debian:bullseye:latest
+  amd64: debian:bullseye:latest
