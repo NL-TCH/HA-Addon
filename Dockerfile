@@ -1,48 +1,25 @@
 ARG BUILD_FROM
 FROM ${BUILD_FROM}
 
-RUN apt-get update &&                            \
-    apt-get install -y --no-install-recommends   \
-            systemd                              \
-            systemd-sysv                         \
-            libsystemd0                          \
-            ca-certificates                      \
-            dbus                                 \
-            iptables                             \
-            iproute2                             \
-            kmod                                 \
-            locales                              \
-            sudo                                 \
-            udev &&                              \
-                                                 \
-    # Prevents journald from reading kernel messages from /dev/kmsg
-    echo "ReadKMsg=no" >> /etc/systemd/journald.conf &&               \
-                                                                      \
-    # Housekeeping
-    apt-get clean -y &&                                               \
-    rm -rf                                                            \
-       /var/cache/debconf/*                                           \
-       /var/lib/apt/lists/*                                           \
-       /var/log/*                                                     \
-       /tmp/*                                                         \
-       /var/tmp/*                                                     \
-       /usr/share/doc/*                                               \
-       /usr/share/man/*                                               \
-       /usr/share/local/* &&                                          \
-                                                                      \
-    # Create default 'admin/admin' user
-    useradd --create-home --shell /bin/bash admin && echo "admin:admin" | chpasswd && adduser admin sudo
 
-# Disable systemd services/units that are unnecessary within a container.
-RUN systemctl mask systemd-udevd.service \
-                   systemd-udevd-kernel.socket \
-                   systemd-udevd-control.socket \
-                   systemd-modules-load.service \
-                   sys-kernel-debug.mount \
-                   sys-kernel-tracing.mount
+ENV container docker
+ENV LC_ALL C
+ENV DEBIAN_FRONTEND noninteractive
 
-# Make use of stopsignal (instead of sigterm) to stop systemd containers.
-STOPSIGNAL SIGRTMIN+3
+RUN apt-get update \
+    && apt-get install -y systemd systemd-sysv sudo wget procps curl systemd iproute2 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Set systemd as entrypoint.
-ENTRYPOINT [ "/sbin/init", "--log-level=err" ]
+RUN cd /lib/systemd/system/sysinit.target.wants/ \
+    && rm $(ls | grep -v systemd-tmpfiles-setup)
+
+RUN rm -f /lib/systemd/system/multi-user.target.wants/* \
+    /etc/systemd/system/*.wants/* \
+    /lib/systemd/system/local-fs.target.wants/* \
+    /lib/systemd/system/sockets.target.wants/*udev* \
+    /lib/systemd/system/sockets.target.wants/*initctl* \
+    /lib/systemd/system/basic.target.wants/* \
+    /lib/systemd/system/anaconda.target.wants/* \
+    /lib/systemd/system/plymouth* \
+    /lib/systemd/system/systemd-update-utmp*
