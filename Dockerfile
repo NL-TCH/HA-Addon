@@ -1,5 +1,9 @@
 ARG BUILD_FROM
-FROM $BUILD_FROM
+FROM ${BUILD_FROM}
 
-#RUN apt update
-#RUN apt install nano -y
+# Set shell
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+RUN \
+    apt-get update -y \
+    apt-get upgrade -y 
